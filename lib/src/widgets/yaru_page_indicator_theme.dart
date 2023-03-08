@@ -18,6 +18,7 @@ class YaruPageIndicatorThemeData
     this.animationDuration,
     this.animationCurve,
     this.dotSize,
+    this.selectedDotSize,
     this.dotSpacing,
     this.dotDecorationBuilder,
     this.mouseCursor,
@@ -32,6 +33,9 @@ class YaruPageIndicatorThemeData
 
   /// Size of the dots.
   final double? dotSize;
+
+  /// Size of the selected dot.
+  final double? selectedDotSize;
 
   /// Base length for the space between the dots.
   /// Will be automatically reduced to fit the vertical constraints.

@@ -27,6 +27,7 @@ class YaruPageIndicator extends StatelessWidget {
     this.animationCurve,
     this.onTap,
     this.dotSize,
+    this.selectedDotSize,
     this.dotSpacing,
     this.dotDecorationBuilder,
     this.mouseCursor,
@@ -59,6 +60,11 @@ class YaruPageIndicator extends StatelessWidget {
   /// Defaults to 12.0
   final double? dotSize;
 
+  /// Size of the selected dot.
+  ///
+  /// Defaults to [dotSize].
+  final double? selectedDotSize;
+
   /// Base length for the space between the dots.
   /// Will be automatically reduced to fit the vertical constraints.
   ///
@@ -77,6 +83,8 @@ class YaruPageIndicator extends StatelessWidget {
     final indicatorTheme = YaruPageIndicatorTheme.of(context);
 
     final dotSize = this.dotSize ?? indicatorTheme?.dotSize ?? 12.0;
+    final selectedDotSize =
+        this.selectedDotSize ?? indicatorTheme?.selectedDotSize ?? dotSize;
     final dotSpacing = this.dotSpacing ?? indicatorTheme?.dotSpacing ?? 48.0;
 
     return LayoutBuilder(
@@ -94,6 +102,7 @@ class YaruPageIndicator extends StatelessWidget {
               theme,
               indicatorTheme,
               dotSize,
+              selectedDotSize,
               dotSpacing,
             );
           }
@@ -108,6 +117,7 @@ class YaruPageIndicator extends StatelessWidget {
     ThemeData theme,
     YaruPageIndicatorThemeData? indicatorTheme,
     double dotSize,
+    double selectedDotSize,
     double dotSpacing,
   ) {
     final dotDecorationBuilder =
@@ -138,25 +148,34 @@ class YaruPageIndicator extends StatelessWidget {
                 shape: BoxShape.circle,
               );
 
+        final effectiveDotSize = index == page ? selectedDotSize : dotSize;
+        final boundingBoxSize =
+            dotSize > selectedDotSize ? dotSize : selectedDotSize;
         return GestureDetector(
           onTap: onTap == null ? null : () => onTap!(index),
           child: Padding(
             padding: EdgeInsets.only(left: index != 0 ? dotSpacing : 0),
             child: MouseRegion(
               cursor: mouseCursor,
-              child: animationDuration == Duration.zero
-                  ? Container(
-                      width: dotSize,
-                      height: dotSize,
-                      decoration: dotDecoration,
-                    )
-                  : AnimatedContainer(
-                      duration: animationDuration,
-                      curve: animationCurve,
-                      width: dotSize,
-                      height: dotSize,
-                      decoration: dotDecoration,
-                    ),
+              child: SizedBox(
+                height: boundingBoxSize,
+                width: boundingBoxSize,
+                child: Center(
+                  child: animationDuration == Duration.zero
+                      ? Container(
+                          width: effectiveDotSize,
+                          height: effectiveDotSize,
+                          decoration: dotDecoration,
+                        )
+                      : AnimatedContainer(
+                          duration: animationDuration,
+                          curve: animationCurve,
+                          width: effectiveDotSize,
+                          height: effectiveDotSize,
+                          decoration: dotDecoration,
+                        ),
+                ),
+              ),
             ),
           ),
         );
